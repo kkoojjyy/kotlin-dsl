@@ -28,5 +28,7 @@ object KotlinType {
 
     val any: KmTypeBuilder = { visitClass("kotlin/Any") }
 
+    val array: KmTypeBuilder = { visitClass("kotlin/Array") }
+
     val typeParameter: KmTypeBuilder = { visitTypeParameter(0) }
 }

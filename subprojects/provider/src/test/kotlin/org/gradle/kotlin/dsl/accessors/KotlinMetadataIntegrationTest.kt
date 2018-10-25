@@ -39,7 +39,7 @@ import org.junit.Test
 fun <T : Dependency> DependencyHandler.foo(
     dependency: T,
     action: Action<T>
-): T = TODO()
+): Array<T> = TODO()
 
 
 class KotlinMetadataIntegrationTest : TestWithTempFiles() {

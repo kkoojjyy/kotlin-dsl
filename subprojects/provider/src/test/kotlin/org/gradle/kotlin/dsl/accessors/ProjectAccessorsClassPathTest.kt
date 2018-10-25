@@ -72,7 +72,8 @@ class ProjectAccessorsClassPathTest : AbstractDslTest() {
                 extensions = listOf(
                     entry<Project, () -> Unit>("function0"),
                     entry<Project, (String) -> Unit>("function1"),
-                    entry<Project, (Int, Double) -> Boolean>("function2")
+                    entry<Project, (Int, Double) -> Boolean>("function2"),
+                    entry<Project, Array<Long>>("arrayOfLong")
                 ),
                 containerElements = listOf(
                 ),
@@ -87,10 +88,12 @@ class ProjectAccessorsClassPathTest : AbstractDslTest() {
         val function0 = mock<() -> Unit>()
         val function1 = mock<(String) -> Unit>()
         val function2 = mock<(Int, Double) -> Boolean>()
+        val arrayOfLong = arrayOf(42L)
         val extensions = mock<ExtensionContainer> {
             on { getByName("function0") } doReturn function0
             on { getByName("function1") } doReturn function1
             on { getByName("function2") } doReturn function2
+            on { getByName("arrayOfLong") } doReturn arrayOfLong
         }
         val project = mock<Project> {
             on { getExtensions() } doReturn extensions
@@ -104,6 +107,7 @@ class ProjectAccessorsClassPathTest : AbstractDslTest() {
                 val a: () -> Unit = function0
                 val b: (String) -> Unit = function1
                 val c: (Int, Double) -> Boolean = function2
+                val d: Array<Long> = arrayOfLong
             """
         )
 

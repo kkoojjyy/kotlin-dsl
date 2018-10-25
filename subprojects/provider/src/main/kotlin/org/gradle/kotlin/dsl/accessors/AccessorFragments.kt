@@ -672,6 +672,7 @@ val TypeOf<*>.builder: KmTypeBuilder
             actualTypeArguments.map { it.builder }
         )
         isWildcard -> upperBound?.builder ?: KotlinType.any
+        isArray -> genericTypeOf(KotlinType.array, componentType!!.builder)
         else -> classOf(concreteClass)
     }
 
