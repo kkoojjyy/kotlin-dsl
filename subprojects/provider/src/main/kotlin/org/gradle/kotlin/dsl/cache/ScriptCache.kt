@@ -21,8 +21,8 @@ import org.gradle.api.Project
 import org.gradle.cache.CacheRepository
 import org.gradle.cache.internal.CacheKeyBuilder
 import org.gradle.cache.internal.CacheKeyBuilder.CacheKeySpec
-
 import org.gradle.caching.internal.controller.BuildCacheController
+import org.gradle.caching.internal.controller.RootBuildCacheControllerRef
 
 import org.gradle.internal.id.UniqueId
 import org.gradle.internal.scopeids.id.BuildInvocationScopeId
@@ -43,7 +43,7 @@ class ScriptCache(
     val cacheKeyBuilder: CacheKeyBuilder,
 
     private
-    val hasBuildCacheIntegration: Boolean
+    val buildCacheControllerRef: RootBuildCacheControllerRef?
 ) {
 
     fun cacheDirFor(
@@ -87,11 +87,7 @@ class ScriptCache(
         displayName: String,
         initializer: (File) -> Unit
     ) {
-
-        val cacheController =
-            if (hasBuildCacheIntegration) buildCacheControllerOf(scriptTarget)
-            else null
-
+        val cacheController = buildCacheControllerFor(scriptTarget)
         if (cacheController != null) {
             val buildCacheKey = ScriptBuildCacheKey(displayName, cacheKey)
             val existing = cacheController.load(LoadDirectory(cacheDir, buildCacheKey))
@@ -115,9 +111,10 @@ class ScriptCache(
     }
 
     private
-    fun buildCacheControllerOf(scriptTarget: Any?): BuildCacheController? =
-        (scriptTarget as? Project)
-            ?.serviceOf<BuildCacheController>()
+    fun buildCacheControllerFor(scriptTarget: Any?): BuildCacheController? =
+        buildCacheControllerRef
+            ?.takeIf { it.isSet && scriptTarget is Project }
+            ?.forNonRootBuild
             ?.takeIf { it.isEnabled }
 
     private

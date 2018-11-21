@@ -20,6 +20,7 @@ import org.gradle.StartParameter
 
 import org.gradle.cache.CacheRepository
 import org.gradle.cache.internal.CacheKeyBuilder
+import org.gradle.caching.internal.controller.RootBuildCacheControllerRef
 
 
 internal
@@ -29,7 +30,8 @@ object BuildServices {
     fun createScriptCache(
         cacheKeyBuilder: CacheKeyBuilder,
         cacheRepository: CacheRepository,
-        startParameters: StartParameter
+        startParameters: StartParameter,
+        rootBuildCacheControllerRef: RootBuildCacheControllerRef
     ): ScriptCache {
 
         val hasBuildCacheIntegration =
@@ -38,7 +40,7 @@ object BuildServices {
         return ScriptCache(
             cacheRepository,
             cacheKeyBuilder,
-            hasBuildCacheIntegration
+            rootBuildCacheControllerRef.takeIf { hasBuildCacheIntegration }
         )
     }
 }
