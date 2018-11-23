@@ -67,9 +67,12 @@ class LoadDirectory(
         val (metadata, entryCount) = unpack(inputStream, directory)
 
         return object : BuildCacheLoadCommand.Result<OriginMetadata> {
-            override fun getMetadata() = when (metadata.buildInvocationId) {
-                currentBuildInvocationId -> OriginMetadata.fromCurrentBuild(metadata.buildInvocationId, metadata.executionTimeMillis)
-                else -> OriginMetadata.fromPreviousBuild(metadata.buildInvocationId, metadata.executionTimeMillis)
+
+            override fun getMetadata() = metadata.run {
+                when (buildInvocationId) {
+                    currentBuildInvocationId -> OriginMetadata.fromCurrentBuild(buildInvocationId, executionTimeMillis)
+                    else -> OriginMetadata.fromPreviousBuild(buildInvocationId, executionTimeMillis)
+                }
             }
 
             override fun getArtifactEntryCount(): Long = entryCount
